@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HTML5 Canvas Winning Wheel</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="main.css" type="text/css" />
+    <link type="icon/x-icon" href="favicon.ico" rel="shortcut icon" />
+    <script type="text/javascript" src="Winwheel.min.js"></script>
+    <script src="TweenMax.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('hinhnen-pc.png') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        /* Media query for tablets and small desktops */
+        @media only screen and (max-width: 1200px) {
+            body {
+                background: url('hinhnen-tablet.png') no-repeat center center fixed;
+                background-size: cover;
+            }
+        }
+
+        /* Media query for mobile devices */
+        @media only screen and (max-width: 768px) {
+            body {
+                background: url('hinhnen-mobile.png') no-repeat center center fixed;
+                background-size: cover;
+            }
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 10px;
+        }
+        #userForm {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+            border-radius: 10px;
+        }
+        .wheel-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        canvas {
+            max-width: 100%;
+            height: auto;
+        }
+        .pointer {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 35px;
+            height: 50px;
+            transform: translateX(-50%);
+            z-index: 1;
+        }
+        .btn {
+            padding: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        input[type="text"], select {
+            width: 150px;
+            padding: 1px;
+            font-size: 14px;
+            margin: 5px 0;
+        }
+        .info-text {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            margin-top: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <form id="userForm" onsubmit="startSpin(event);">
+            <input type="text" id="invoice" name="invoice" placeholder="Hoá Đơn Mua Hàng" required minlength="8" maxlength="8" pattern=".{8}" title="Hoá đơn mua hàng phải có 8 ký tự">
+            <select id="store" name="store" required>
+                <option value="" disabled selected>Chọn Địa Chỉ Cửa Hàng</option>
+                <option value="CN Vĩnh Trạch">CN Vĩnh Trạch</option>
+                <option value="CN Cù Lao Dung">CN Cù Lao Dung</option>
+                <option value="CN Lai Hoà">CN Lai Hoà</option>
+                <option value="CN Vinh Phước">CN Vinh Phước</option>
+                <option value="CN Khánh Hoà">CN Khánh Hoà</option>
+                <option value="CN HòaTú">CN HòaTú</option>
+                <option value="CN Vinh Châu">CN Vinh Châu</option>
+                <option value="CN Gia Hoà">CN Gia Hoà</option>
+            </select>
+            <button type="submit" id="spin_start" class="btn">Quay ngay</button>
+        </form>
+        <div class="wheel-container">
+            <img src="pointer.png" alt="Pointer" class="pointer" />
+            <canvas id="canvas" width="434" height="434">
+                <p style="color: white" align="center">Sorry, your browser doesn't support canvas. Please try another.</p>
+            </canvas>
+            <audio id="backgroundAudio">
+                <source src="background.mp3" type="audio/mpeg">
+                <source src="background.mp3" type="audio/wav">
+            </audio>
+        </div>
+    </div>
+    <script>
+        let duration = 35;
+        let spins = 15;
+        let theWheel = new Winwheel({
+            'numSegments': 8,
+            'outerRadius': 212,
+            'textFontSize': 18,
+            'rotationAngle': 0,
+            'segments': [
+                {'fillStyle': '#ffffff', 'text': 'Áo mưa (dù)'},
+                {'fillStyle': '#fb6700', 'text': 'Dịch Trùn Quế'},
+                {'fillStyle': '#ffffff', 'text': 'Khoáng Xanh Nature'},
+                {'fillStyle': '#fb6700', 'text': 'Pond Biotic'},
+                {'fillStyle': '#ffffff', 'text': 'Áo mưa (dù)'},
+                {'fillStyle': '#fb6700', 'text': 'Dịch Trùn Quế'},
+                {'fillStyle': '#ffffff', 'text': 'Khoáng Xanh Nature'},
+                {'fillStyle': '#fb6700', 'text': 'Pond Biotic'},
+            ],
+            'animation': {
+                'type': 'spinToStop',
+                'duration': duration,
+                'spins': spins,
+                'callbackSound': playSound,
+                'soundTrigger': 'pin',
+                'callbackFinished': alertPrize,
+            },
+            'pins': {
+                'number': 32
+            }
+        });
+
+        let wheelSpinning = false;
+
+        let audio = document.getElementById('backgroundAudio');
+        let tickSound = new Audio('tick.mp3');
+        
+        function playSound() {
+            tickSound.pause();
+            tickSound.currentTime = 0;
+            tickSound.play();
+        }
+
+        function startSpin(event) {
+            event.preventDefault();
+
+            if (!wheelSpinning) {
+                const invoice = document.getElementById('invoice').value;
+                const store = document.getElementById('store').value;
+
+                if (invoice && invoice.length === 8 && store) {
+                    document.getElementById('spin_start').setAttribute("disabled", true);
+                    stopAngle();
+                    theWheel.startAnimation();
+                    wheelSpinning = true;
+                    // Play background audio
+                    audio.play();
+                } else {
+                    alert("Vui lòng nhập hoá đơn mua hàng gồm 8 ký tự và chọn địa chỉ cửa hàng!");
+                }
+            }
+        
+        }
+
+        function stopAngle() {
+            let probability = Math.random();
+            let stopAt;
+
+            if (probability < 0.10) { // 10% chance
+                let start = 0;
+                let stop = Math.floor(Math.random() * 45);
+                stopAt = start + stop;
+            } else if (probability < 0.35) { // 25% chance
+                let start = 46;
+                let stop = Math.floor(Math.random() * 45);
+                stopAt = start + stop;
+            } else if (probability < 0.50) { // 15% chance
+                let start = 91;
+                let stop = Math.floor(Math.random() * 45);
+                stopAt = start + stop;
+            } else if (probability < 0.50) { // 0% chance
+                let start = 136;
+                let stop = Math.floor(Math.random() * 45);
+                stopAt = start + stop;
+            } else if (probability < 0.60) { // 10% chance
+                let start = 181;
+                let stop = Math.floor(Math.random() * 45);
+                stopAt = start + stop;
+            } else if (probability < 0.85) { // 25% chance
+                let start = 226;
+                let stop = Math.floor(Math.random() * 45);
+                stopAt = start + stop;
+            } else if (probability < 1.00) { // 15% chance
+                let start = 271;
+                let stop = Math.floor(Math.random() * 45);
+                stopAt = start + stop;
+            } else { // 0% chance
+                let start = 316;
+                let stop = Math.floor(Math.random() * 45);
+                stopAt = start + stop;
+            }
+
+            theWheel.animation.stopAngle = stopAt;
+        }
+
+        function alertPrize(indicatedSegment) {
+            const invoice = document.getElementById('invoice').value;
+            const store = document.getElementById('store').value;
+            const prize = "Chúc mừng với hoá đơn " + invoice + " tại " + store + ", bạn trúng: " + indicatedSegment.text;
+            alert(prize);
+            saveToGoogleSheet(invoice, store, indicatedSegment.text);
+        }
+
+        function saveToGoogleSheet(invoice, store, prize) {
+            const result = {
+                invoice: invoice,
+                store: store,
+                prize: prize
+            };
+
+            fetch('https://script.google.com/macros/s/AKfycbycRo6mX8GPwhJ1inSWz3ZeYVvKdkpFfK7vkdsppKJmr62hLy1BZyVfopAV97YHqvi-/exec', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(result)
+            })
+            .then(response => response.text())
+            .then(data => console.log(data))
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
