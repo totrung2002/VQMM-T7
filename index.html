@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>HTML5 Canvas Winning Wheel</title>
+    <title>Vòng Quay May Mắn</title>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -125,32 +125,32 @@
             </audio>
         </div>
     </div>
-    <script>
+   <script>
         let duration = 35;
-let spins = 15;
-let theWheel = new Winwheel({
-    'numSegments': 8,
-    'outerRadius': 212,
-    'textFontSize': 18,
-    'rotationAngle': 0,
-    'segments': [
-        {'fillStyle': '#ffffff', 'text': 'Áo mưa (dù)'},
-        {'fillStyle': '#fb6700', 'text': 'Dịch Trùn Quế'},
-        {'fillStyle': '#ffffff', 'text': 'Khoáng Xanh Nature'},
-        {'fillStyle': '#fb6700', 'text': 'Pond Biotic'},
-        {'fillStyle': '#ffffff', 'text': 'Áo mưa (dù)'},
-        {'fillStyle': '#fb6700', 'text': 'Dịch Trùn Quế'},
-        {'fillStyle': '#ffffff', 'text': 'Khoáng Xanh Nature'},
-        {'fillStyle': '#fb6700', 'text': 'Pond Biotic'},
-    ],
-    'animation': {
-        'type': 'spinToStop',
-        'duration': duration,
-        'spins': spins,
-        'callbackSound': playSound,
-        'soundTrigger': 'pin',
-        'callbackFinished': alertPrize,
-    },
+        let spins = 15;
+        let theWheel = new Winwheel({
+            'numSegments': 8,
+            'outerRadius': 212,
+            'textFontSize': 18,
+            'rotationAngle': 0,
+            'segments': [
+                {'fillStyle': '#ffffff', 'text': 'Áo mưa (dù)'},
+                {'fillStyle': '#fb6700', 'text': 'Dịch Trùn Quế'},
+                {'fillStyle': '#ffffff', 'text': 'Khoáng Xanh Nature'},
+                {'fillStyle': '#fb6700', 'text': 'Pond Biotic'},
+                {'fillStyle': '#ffffff', 'text': 'Áo mưa (dù)'},
+                {'fillStyle': '#fb6700', 'text': 'Dịch Trùn Quế'},
+                {'fillStyle': '#ffffff', 'text': 'Khoáng Xanh Nature'},
+                {'fillStyle': '#fb6700', 'text': 'Pond Biotic'},
+            ],
+            'animation': {
+                'type': 'spinToStop',
+                'duration': duration,
+                'spins': spins,
+                'callbackSound': playSound,
+                'soundTrigger': 'pin',
+                'callbackFinished': alertPrize,
+            },
     'pins': {
         'number': 32
     }
