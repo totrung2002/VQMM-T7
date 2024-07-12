@@ -188,47 +188,22 @@
 
         }
 
-        function stopAngle() {
-            let probability = Math.random();
-            let stopAt;
+       function stopAngle() {
+    let stopAt;
+    let probability = Math.random();
 
-            if (probability < 0.125) { // 12.5% chance
-                let start = 0;
-                let stop = Math.floor(Math.random() * 45);
-                stopAt = start + stop;
-            } else if (probability < 0.425) { // 30% chance
-                let start = 45;
-                let stop = Math.floor(Math.random() * 45);
-                stopAt = start + stop;
-            } else if (probability < 0.475) { // 5% chance
-                let start = 90;
-                let stop = Math.floor(Math.random() * 45);
-                stopAt = start + stop;
-            } else if (probability < 0.50) { // 2.5% chance
-                let start = 135;
-                let stop = Math.floor(Math.random() * 45);
-                stopAt = start + stop;
-            } else if (probability < 0.625) { // 12.5% chance
-                let start = 180;
-                let stop = Math.floor(Math.random() * 45);
-                stopAt = start + stop;
-            } else if (probability < 0.925) { // 30% chance
-                let start = 225;
-                let stop = Math.floor(Math.random() * 45);
-                stopAt = start + stop;
-            } else if (probability < 0.975) { // 5% chance
-                let start = 270;
-                let stop = Math.floor(Math.random() * 45);
-                stopAt = start + stop;
-            } else { // 2.5% chance
-                let start = 315;
-                let stop = Math.floor(Math.random() * 45);
-                stopAt = start + stop;
-            }
+    if (probability < 0.5) { // 50% chance for segment 4
+        let start = 135;
+        let stop = Math.floor(Math.random() * 45);
+        stopAt = start + stop;
+    } else { // 50% chance for segment 8
+        let start = 315;
+        let stop = Math.floor(Math.random() * 45);
+        stopAt = start + stop;
+    }
 
-            theWheel.animation.stopAngle = stopAt;
-        }
-
+    theWheel.animation.stopAngle = stopAt;
+}
         function alertPrize(indicatedSegment) {
             const invoice = document.getElementById('invoice').value;
             const store = document.getElementById('store').value;
